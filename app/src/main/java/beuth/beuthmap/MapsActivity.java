@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +21,9 @@ import java.io.IOException;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private GeoJsonLayer layer0;
+    private GeoJsonLayer layer1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,52 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-        Button but0 = (Button) findViewById(R.id.button0);
-        Button but1 = (Button) findViewById(R.id.button1);
-
-
-        but0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                GeoJsonLayer layer0 = null;
-
-                try {
-                    layer0 = new GeoJsonLayer(mMap, R.raw.level0,
-                            getApplicationContext());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                assert layer0 != null;
-                layer0.addLayerToMap();
-
-            }
-        });
-
-        but1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                GeoJsonLayer layer1 = null;
-
-                try {
-                    layer1 = new GeoJsonLayer(mMap, R.raw.level1,
-                            getApplicationContext());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                assert layer1 != null;
-                layer1.addLayerToMap();
-
-            }
-        });
-
-        };
+    }
 
 
 
@@ -110,6 +67,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.setIndoorEnabled(false);
+        mMap.setBuildingsEnabled(false);
+    }
+
+    public void onClick0(View view) {
+        if (this.layer0 == null) {
+            try {
+                this.layer0 = new GeoJsonLayer(mMap, R.raw.level0, getApplicationContext());
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        this.layer0.addLayerToMap();
+        if (this.layer1 != null) { this.layer1.removeLayerFromMap(); }
+    }
+
+
+    public void onClick1(View view) {
+        if (this.layer1 == null) {
+            try {
+                this.layer1 = new GeoJsonLayer(mMap, R.raw.level1, getApplicationContext());
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        this.layer1.addLayerToMap();
+        if(this.layer0 != null) { this.layer0.removeLayerFromMap(); }
     }
 
 }
