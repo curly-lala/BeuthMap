@@ -1,4 +1,14 @@
 <resources>
-    <string name="app_name">Beuth Map</string>
-    <string name="title_activity_maps">Beuth Map</string>
+    <string name="app_name">Beuth App</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string-array name="room_array">
+        <item>136</item>
+        <item>137</item>
+        <item>138</item>
+    </string-array>
+
+
 </resources>

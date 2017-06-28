@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,11 +17,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private GoogleMap mMap;
     private GeoJsonLayer layer0;
@@ -57,18 +67,87 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(beuth));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mMap.setMyLocationEnabled(true);
         mMap.setIndoorEnabled(false);
         mMap.setBuildingsEnabled(false);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.room_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+        InputStream inputStream = getResources().openRawResource(R.raw.level1_points);
+        String file = null;
+        try {
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            file = sb.toString();
+        } catch (IOException ie) {
+            ie.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) inputStream.close();
+            } catch (Exception ignored) {
+            }
+        }
+
+
+        try {
+
+            JSONObject jsonObj = new JSONObject(file);
+            JSONArray features = jsonObj.getJSONArray("features");
+
+
+            for(int i=0; i<features.length(); i++){
+
+                if(features.getJSONObject(i).getJSONObject("properties").getString("UID").equals(parent.getSelectedItem().toString())){
+
+                    JSONArray coordinates = features.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates");
+                    String latitude = coordinates.getString(0);
+                    String longitude = coordinates.getString(1);
+
+                    double lat = Double.parseDouble(latitude);
+                    double lng = Double.parseDouble(longitude);
+
+                    LatLng raum = new LatLng(lng, lat);
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(raum)
+                    );
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(raum));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     public void onClick0(View view) {
