@@ -62,7 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng beuth = new LatLng(52.544307, 13.352703);
+        LatLng beuth = new LatLng(52.544288, 13.352497);
         mMap.addMarker(new MarkerOptions().position(beuth).title("Beuth Hochschule für Technik Berlin"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(beuth));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
@@ -134,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     );
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(raum));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(19));
 
                 }
             }
