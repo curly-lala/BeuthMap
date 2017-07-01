@@ -82,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
+        spinner.setPrompt("Raumsuche");
         spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
     }
 
@@ -95,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
             while ((line = r.readLine()) != null) {
                 sb.append(line).append("\n");
             }
@@ -134,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     );
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(raum));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(19));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
 
                 }
             }
